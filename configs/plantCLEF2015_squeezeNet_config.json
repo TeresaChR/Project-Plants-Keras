@@ -1,0 +1,42 @@
+{
+  "exp": {
+    "name": "PlantCLEF2015"
+  },
+  "data_loader": {
+    "name": "image_generator_data_loader.ImageGeneratorDataloader",
+    "train_data_path": "dataset/PlantCLEF2015/train",
+    "validation_data_path": "dataset/PlantCLEF2015/validation",
+    "test_data_path": "dataset/PlantCLEF2015/test"
+  },
+  "model":{
+  	"pretrained_weights_file": "",
+    "learning_rate": 0.001,
+    "optimizer": "rmsprop",
+    "classes_num": 1000
+  },
+  "trainer":{
+    "num_epochs": 20,
+    "batch_size": 120,
+    "validation_split":0.25,
+    "dim":227,
+    "num_training_img": 91758, 
+    "num_val_img": 21446, 
+    "verbose_training": true
+  },
+  "evaluater":{
+  	"weights_path": "experiments/2019-06-09/PlantCLEF2015/checkpoints/PlantCLEF2015-19-2.92.hdf5"
+  },
+  "callbacks":{
+    "checkpoint_monitor": "val_loss",
+    "checkpoint_mode": "min",
+    "checkpoint_save_best_only": true,
+    "checkpoint_save_weights_only": true,
+    "checkpoint_verbose": true,
+    "tensorboard_write_graph": true
+  },
+  "comet":{
+  	"api_key":"",
+    "workspace":"",
+     "exp_name":"Experiment squeezeNet"
+  }
+}

@@ -1,6 +1,6 @@
-﻿# Keras Project Template [![CometML](https://img.shields.io/badge/comet.ml-track-brightgreen.svg)](https://www.comet.ml)
+﻿# Plant classificaiton project
 
-A project template to simplify building and training deep learning models using Keras.
+A project template to classify plant species
 
 # Table of contents
 

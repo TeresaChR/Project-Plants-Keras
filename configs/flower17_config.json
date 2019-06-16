@@ -1,0 +1,38 @@
+{
+  "exp": {
+    "name": "flower17"
+  },
+  "data_loader": {
+    "name": "image_generator_data_loader.ImageGeneratorDataloader",
+    "train_data_path": "dataset/17_flowers/train",
+    "validation_data_path": "dataset/17_flowers/validation",
+    "test_data_path": "dataset/17_flowers/test"
+  },
+  "model":{
+  	"pretrained_weights_file": "experiments/2019-01-23/flower17/checkpoints/flower17-01-2.67.h5",
+    "learning_rate": 0.001,
+    "optimizer": "adam",
+    "classes_num": 17
+  },
+  "trainer":{
+    "num_epochs": 60,
+    "batch_size": 64,
+    "validation_split":0.25,
+    "dim":299,
+    "num_training_img": 1190, 
+    "num_val_img": 170, 
+    "verbose_training": true
+  },
+  "evaluater":{
+  	"weights_path": "experiments/2019-01-23/flower17/checkpoints/flower17-54-0.78.h5"
+  },
+  "callbacks":{
+    "checkpoint_monitor": "val_loss",
+    "checkpoint_mode": "min",
+    "checkpoint_save_best_only": true,
+    "checkpoint_save_weights_only": true,
+    "checkpoint_verbose": true,
+    "tensorboard_write_graph": true
+  },
+  "comet_api_key": "x8YQdFOARhsDjIinl1ydX5lFG"
+}

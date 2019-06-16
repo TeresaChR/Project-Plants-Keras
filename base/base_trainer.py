@@ -1,7 +1,8 @@
 class BaseTrain(object):
-    def __init__(self, model, data, config):
+    def __init__(self, model, trainData, valData, config):
         self.model = model
-        self.data = data
+        self.trainData = trainData
+        self.valData =  valData
         self.config = config
 
     def train(self):
