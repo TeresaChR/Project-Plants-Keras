@@ -29,8 +29,15 @@ class Efficientnet_model(BaseModel):
 
     def build_model(self):
         
-        self.model = EfficientNetB0(weights='imagenet')
-
+        base_model = EfficientNetB0(weights='imagenet',include_top=False)
+        
+        
+        
+        x=base_model.output
+        x=GlobalAveragePooling2D()(x)
+        preds=Dense(self.config.model.classes_num, activation='softmax')(x) #final layer with softmax activation
+        
+        self.model=Model(inputs=base_model.input,outputs=preds)
         #  This compiles the model architecture and the necessary functions that we
         #  categorical crossentropy is the loss function for classification problems with more than 2 classes
         self.model.compile(loss='categorical_crossentropy',

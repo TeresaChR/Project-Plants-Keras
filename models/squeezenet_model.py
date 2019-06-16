@@ -2,8 +2,8 @@ from base.base_model import BaseModel
 from keras_applications.imagenet_utils import _obtain_input_shape
 from keras import backend as K
 from keras.layers import Input, Convolution2D, MaxPooling2D, Activation, concatenate, Dropout, warnings
-from keras.layers import GlobalAveragePooling2D, GlobalMaxPooling2D
-from keras.models import Model
+from keras.layers import GlobalMaxPooling2D, Dense,GlobalAveragePooling2D
+from keras.models import Model 
 from keras.engine.topology import get_source_inputs
 from keras.utils import get_file
 from keras.utils import layer_utils
@@ -29,8 +29,19 @@ class SqueezeNet_model(BaseModel):
 
     def build_model(self):
         
-        self.model = self.SqueezeNet(include_top=True, weights='imagenet', input_tensor=None, input_shape=None, pooling=None, classes=1000)
+        base_model =  self.SqueezeNet(include_top=False, weights='imagenet', input_tensor=None, input_shape=None, pooling=None, classes=1000)
 
+
+                #for i,layer in enumerate(self.model.layers):
+        #    print(i,layer.name)
+        #base_model.summary()
+        
+        x=base_model.output
+        x=GlobalAveragePooling2D()(x)
+        preds=Dense(self.config.model.classes_num, activation='softmax')(x) #final layer with softmax activation
+        
+        self.model=Model(inputs=base_model.input,outputs=preds)
+        
         #  This compiles the model architecture and the necessary functions that we
         #  categorical crossentropy is the loss function for classification problems with more than 2 classes
         self.model.compile(loss='categorical_crossentropy',

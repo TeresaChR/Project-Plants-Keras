@@ -1,27 +1,27 @@
 {
   "exp": {
-    "name": "PlantCLEF2015_efficientNet"
+    "name": "flower102_squeezenet"
   },
   "data_loader": {
     "name": "image_generator_data_loader.ImageGeneratorDataloader",
-    "train_data_path": "dataset/PlantCLEF2015/train",
-    "validation_data_path": "dataset/PlantCLEF2015/validation",
-    "test_data_path": "dataset/PlantCLEF2015/test"
+    "train_data_path": "dataset/102_flowers/train",
+    "validation_data_path": "dataset/102_flowers/validation",
+    "test_data_path": "dataset/102_flowers/test"
   },
   "model":{
-  	"name": "efficientnet_model.Efficientnet_model",
+  	"name": "squeezenet_model.SqueezeNet_model",
   	"pretrained_weights_file": "",
     "learning_rate": 0.001,
     "optimizer": "rmsprop",
-    "classes_num": 1000
+    "classes_num": 102
   },
   "trainer":{
-    "num_epochs": 20,
-    "batch_size": 56,
+    "num_epochs": 1,
+    "batch_size": 120,
     "validation_split":0.25,
-    "dim":224,
-    "num_training_img": 91758, 
-    "num_val_img": 21446, 
+    "dim":227,
+    "num_training_img": 6182, 
+    "num_val_img": 2009, 
     "verbose_training": true
   },
   "evaluater":{

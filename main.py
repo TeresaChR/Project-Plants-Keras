@@ -3,14 +3,7 @@ from comet_ml import Experiment
 from data_loader.image_generator_data_loader import ImageGeneratorDataloader
 
 #from models.simple_mnist_model import SimpleMnistModel
-from models.default_model import DefaultModel
-from models.inceptionv3_model import Inceptionv3_model
-from models.vgg16_model import Vgg16_model
-from models.mobilenet_model import MobileNet_model
-from models.mobilenetV2_model import MobileNetV2_model
-from models.squeezenet_model import SqueezeNet_model
-from models.shufflenet_model import ShuffleNet_model
-#from trainers.simple_mnist_trainer import SimpleMnistModelTrainer
+from utils import factory
 from trainers.image_trainer import ImageTrainer
 from utils.config import process_config
 from utils.dirs import create_dirs
@@ -24,6 +17,7 @@ def main():
     try:
         args = get_args()
         config = process_config(args.config)
+        
     except:
         print("missing or invalid arguments")
         exit(0)
@@ -37,14 +31,7 @@ def main():
     data_loader = ImageGeneratorDataloader(config)
      
     print('Create the model.')
-    #model = SimpleMnistModel(config)
-    #model = DefaultModel(config)
-    #model = Vgg16_model(config)
-    #model = Inceptionv3_model(config)
-    #model = MobileNet_model(config)
-    #model = MobileNetV2_model(config)
-    #model = SqueezeNet_model(config)
-    model = ShuffleNet_model(config)
+    model = factory.create("models."+config.model.name)(config)
     #train = True
     train = True
     

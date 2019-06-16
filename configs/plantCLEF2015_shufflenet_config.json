@@ -1,6 +1,6 @@
 {
   "exp": {
-    "name": "PlantCLEF2015_efficientNet"
+    "name": "PlantCLEF2015_shufflenet"
   },
   "data_loader": {
     "name": "image_generator_data_loader.ImageGeneratorDataloader",
@@ -9,7 +9,7 @@
     "test_data_path": "dataset/PlantCLEF2015/test"
   },
   "model":{
-  	"name": "efficientnet_model.Efficientnet_model",
+  "name": "shufflenet_model.ShuffleNet_model",
   	"pretrained_weights_file": "",
     "learning_rate": 0.001,
     "optimizer": "rmsprop",
@@ -17,7 +17,7 @@
   },
   "trainer":{
     "num_epochs": 20,
-    "batch_size": 56,
+    "batch_size": 150,
     "validation_split":0.25,
     "dim":224,
     "num_training_img": 91758, 

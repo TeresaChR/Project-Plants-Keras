@@ -13,7 +13,7 @@ import numpy as np
 
 #WEIGHTS_PATH = "https://github.com/scheckmedia/keras-shufflenet/raw/master/weights/ShuffleNet_1X_g3_br_0.25_373.hdf5"
 WEIGHTS_PATH ="/home/stephen/Downloads/ShuffleNet_1X_g3_br_0.25_373.hdf5"
-#Code sourse if from, Need to review aginst paper
+#Code sourse draft, Need to review aginst paper
 #https://github.com/scheckmedia/keras-shufflenet/blob/master/shufflenet.py
 
 
@@ -22,11 +22,11 @@ class ShuffleNet_model(BaseModel):
     def __init__(self, config):
         super(ShuffleNet_model, self).__init__(config)
         self.build_model()
-
-    def build_model(self):
+        self.config=config
         
-        self.model = self.ShuffleNet(self)
-
+    def build_model(self,):
+        
+        self.model = self.ShuffleNet(self, classes=self.config.model.classes_num)
         #  This compiles the model architecture and the necessary functions that we
         #  categorical crossentropy is the loss function for classification problems with more than 2 classes
         self.model.compile(loss='categorical_crossentropy',

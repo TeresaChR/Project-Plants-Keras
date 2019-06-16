@@ -9,6 +9,7 @@
     "test_data_path": "dataset/PlantCLEF2015/test"
   },
   "model":{
+  	"name": "mobilenetV2_model.MobileNetV2_model",
   	"pretrained_weights_file": "",
     "learning_rate": 0.001,
     "optimizer": "rmsprop",
@@ -24,7 +25,7 @@
     "verbose_training": true
   },
   "evaluater":{
-  	"weights_path": "experiments/2019-06-09/PlantCLEF2015/checkpoints/PlantCLEF2015-19-2.92.hdf5"
+  	"weights_path": ""
   },
   "callbacks":{
     "checkpoint_monitor": "val_loss",
@@ -35,8 +36,7 @@
     "tensorboard_write_graph": true
   },
   "comet":{
-  	"api_key":"",
-    "workspace":"",
-     "exp_name":"Experiment mobilenetV2"
-  }
+  	"api_key":"0s3GVqlRjkA3Z28Nr1vY8jb1Z",
+    "workspace":"teresachr"
+  } 
 }

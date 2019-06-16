@@ -1,6 +1,6 @@
 {
   "exp": {
-    "name": "PlantCLEF2015_efficientNet"
+    "name": "PlantCLEF2015_squeezenet"
   },
   "data_loader": {
     "name": "image_generator_data_loader.ImageGeneratorDataloader",
@@ -9,7 +9,7 @@
     "test_data_path": "dataset/PlantCLEF2015/test"
   },
   "model":{
-  	"name": "efficientnet_model.Efficientnet_model",
+  	"name": "squeezenet_model.SqueezeNet_model",
   	"pretrained_weights_file": "",
     "learning_rate": 0.001,
     "optimizer": "rmsprop",
@@ -17,9 +17,9 @@
   },
   "trainer":{
     "num_epochs": 20,
-    "batch_size": 56,
+    "batch_size": 120,
     "validation_split":0.25,
-    "dim":224,
+    "dim":227,
     "num_training_img": 91758, 
     "num_val_img": 21446, 
     "verbose_training": true
