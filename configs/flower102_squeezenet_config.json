@@ -5,18 +5,17 @@
   "data_loader": {
     "name": "image_generator_data_loader.ImageGeneratorDataloader",
     "train_data_path": "dataset/102_flowers/train",
-    "validation_data_path": "dataset/102_flowers/validation",
-    "test_data_path": "dataset/102_flowers/test"
+    "validation_data_path": "dataset/102_flowers/validation"
   },
   "model":{
-  	"name": "squeezenet_model.SqueezeNet_model",
-  	"pretrained_weights_file": "",
+    "name": "squeezenet_model.SqueezeNet_model",
+    "pretrained_weights_file": "",
     "learning_rate": 0.001,
-    "optimizer": "rmsprop",
+    "optimizer": "SGD(lr=0.001, momentum=0.9)",
     "classes_num": 102
   },
   "trainer":{
-    "num_epochs": 1,
+    "num_epochs": 20,
     "batch_size": 120,
     "validation_split":0.25,
     "dim":227,
@@ -25,7 +24,7 @@
     "verbose_training": true
   },
   "evaluater":{
-  	"weights_path": ""
+    "weights_path": ""
   },
   "callbacks":{
     "checkpoint_monitor": "val_loss",
@@ -36,7 +35,7 @@
     "tensorboard_write_graph": true
   },
   "comet":{
-  	"api_key":"0s3GVqlRjkA3Z28Nr1vY8jb1Z",
+    "api_key":"0s3GVqlRjkA3Z28Nr1vY8jb1Z",
     "workspace":"teresachr"
-  } 
+  }
 }

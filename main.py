@@ -32,18 +32,17 @@ def main():
      
     print('Create the model.')
     model = factory.create("models."+config.model.name)(config)
-    #train = True
-    train = True
     
-    if train:
+    if args.test:       
+        print ('Start testing')
+        ImageEvaluater(model.model, data_loader.get_validation_generator(),data_loader.get_train_generator().class_indices, config)
+    else:     
         print('Create the trainer')
         trainer = ImageTrainer(model.model, data_loader.get_train_generator(),data_loader.get_validation_generator(), config)
         
         print('Start training the model.')
         trainer.train()
-    else:        
-        print ('Start testing')
-        ImageEvaluater(model.model, data_loader.get_validation_generator(),data_loader.get_train_generator().class_indices, config)
+
           
 if __name__ == '__main__':
     main()

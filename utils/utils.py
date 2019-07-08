@@ -45,6 +45,9 @@ def get_args():
         metavar='C',
         default='None',
         help='The Configuration file')
+    argparser.add_argument('-t', '--test',action='store_true', help='input directory to process')
+    
+    
    # argparser.add_argument('-i', '--inputDir', action=readable_dir, help='input directory to process')
    # argparser.add_argument('-o', '--outputDir', action=readable_dir, help='output directory to process')
     #argparser.add_argument('-l', '--inputFileList', action=readable_file, help='input file with a list of images')

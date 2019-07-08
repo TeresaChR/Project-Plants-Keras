@@ -7,6 +7,7 @@ from keras.models import Model
 from keras.engine.topology import get_source_inputs
 from keras.utils import get_file
 from keras.utils import layer_utils
+from keras.optimizers import SGD
 
 WEIGHTS_PATH = "https://github.com/rcmalli/keras-squeezenet/releases/download/v1.0/squeezenet_weights_tf_dim_ordering_tf_kernels.h5"
 WEIGHTS_PATH_NO_TOP = "https://github.com/rcmalli/keras-squeezenet/releases/download/v1.0/squeezenet_weights_tf_dim_ordering_tf_kernels_notop.h5"
@@ -30,7 +31,8 @@ class SqueezeNet_model(BaseModel):
     def build_model(self):
         
         base_model =  self.SqueezeNet(include_top=False, weights='imagenet', input_tensor=None, input_shape=None, pooling=None, classes=1000)
-
+        for i in range(1,len(base_model.layers)):
+            base_model.layers[i].name = base_model.layers[i].name + '1'
 
                 #for i,layer in enumerate(self.model.layers):
         #    print(i,layer.name)
@@ -44,10 +46,12 @@ class SqueezeNet_model(BaseModel):
         
         #  This compiles the model architecture and the necessary functions that we
         #  categorical crossentropy is the loss function for classification problems with more than 2 classes
-        self.model.compile(loss='categorical_crossentropy',
-                      optimizer=self.config.model.optimizer,
-                      metrics=['accuracy'])  # want to see how accurate the model is (but are minimize the loss)
-     
+        self.model.compile(optimizer=SGD(lr=0.001, momentum=0.9), loss='categorical_crossentropy', metrics=['accuracy'])
+
+        #self.model.compile(loss='categorical_crossentropy',
+        #               optimizer=self.config.model.optimizer,
+        #               metrics=['accuracy'])  # want to see how accurate the model is (but are minimize the loss)
+       
     # Modular function for Fire Node
 
     def fire_module(self, x, fire_id, squeeze=16, expand=64):
@@ -154,10 +158,11 @@ class SqueezeNet_model(BaseModel):
                                         WEIGHTS_PATH,
                                         cache_subdir='models')
             else:
+                
                 weights_path = get_file('squeezenet_weights_tf_dim_ordering_tf_kernels_notop.h5',
                                         WEIGHTS_PATH_NO_TOP,
                                         cache_subdir='models')
-                
+            K.set_image_dim_ordering('tf')    
             model.load_weights(weights_path)
             if K.backend() == 'theano':
                 layer_utils.convert_all_kernels_in_model(model)

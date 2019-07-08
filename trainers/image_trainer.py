@@ -35,7 +35,7 @@ class ImageTrainer(BaseTrain):
 
         if hasattr(self.config,"comet"):
             from comet_ml import Experiment
-            experiment = Experiment(api_key=self.config.comet.api_key, project_name=self.config.comet.exp_name, workspace=self.config.comet.workspace)
+            experiment = Experiment(api_key=self.config.comet.api_key, project_name=self.config.exp.name, workspace=self.config.comet.workspace)
             experiment.disable_mp()
             experiment.log_parameters(self.acc)
             self.callbacks.append(experiment.get_keras_callback())
