@@ -1,18 +1,31 @@
 from base.base_evaluater import BaseEvaluater
 from keras.preprocessing import image
+import tensorflow as tf
+import numpy as np
+from keras import backend as K
+
 import os
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import itertools
+
+
 from sklearn.metrics import classification_report, confusion_matrix
+
 
 class ImageEvaluater(BaseEvaluater):
     def __init__(self, model, valData, train_labels, config):
         super(ImageEvaluater, self).__init__(model, valData, train_labels, config)
     
         model.load_weights(self.config.evaluater.weights_path)
-
+        
+        print("FLOPS", self.get_flops(self.model))
+        print("memory usage:GB",self.get_model_memory_usage(1, self.model))
+        self.model.summary()
+        
+        
         # get all the test images paths
         #pathx="/home/stephen/Projects/flower-recognition/dataset/test"
         pathx=self.config.data_loader.validation_data_path        
@@ -77,7 +90,10 @@ class ImageEvaluater(BaseEvaluater):
 
         y_true=valData.classes
         print('Classification Report')
-        print(classification_report(y_true, y_pred, target_names=train_labels))
+        reportClassidicationReport = classification_report(y_true, y_pred, target_names=train_labels)
+        print(reportClassidicationReport)
+        self.plot_classification_report(reportClassidicationReport)
+        plt.show()
         
         print('Confusion Matrix')
         cnf_matrix = confusion_matrix(y_true, y_pred)
@@ -175,3 +191,94 @@ class ImageEvaluater(BaseEvaluater):
             if names[name] == location:
                 return name
         return 'invalid location passed to get_name'
+    
+    #function https://stackoverflow.com/questions/28200786/how-to-plot-scikit-learn-classification-report
+    def plot_classification_report(self, classificationReport,
+                               title='Classification report',
+                               cmap='RdBu'):
+
+        classificationReport = classificationReport.replace('\n\n', '\n')
+        classificationReport = classificationReport.replace(' / ', '/')
+        classificationReport = classificationReport.replace('micro avg','micro_avg')
+        classificationReport = classificationReport.replace('macro avg','macro_avg')
+        classificationReport = classificationReport.replace('weighted avg','weighted_avg')
+                                                                    
+        lines = classificationReport.split('\n')
+    
+        classes, plotMat, support, class_names = [], [], [], []
+        for line in lines[1:]:  # if you don't want avg/total result, then change [1:] into [1:-1]
+            t = line.strip().split()
+            print(t)
+            if len(t) < 2:
+                continue
+            classes.append(t[0])
+            v = [float(x) for x in t[1: len(t) - 1]]
+            support.append(int(t[-1]))
+            class_names.append(t[0])
+            plotMat.append(v)
+    
+        plotMat = np.array(plotMat)
+        xticklabels = ['Precision', 'Recall', 'F1-score']
+        yticklabels = ['{0} ({1})'.format(class_names[idx], sup)
+                       for idx, sup in enumerate(support)]
+    
+        plt.imshow(plotMat, interpolation='nearest', cmap=cmap, aspect='auto')
+        plt.title(title)
+        plt.colorbar()
+        plt.xticks(np.arange(3), xticklabels, rotation=45)
+        plt.yticks(np.arange(len(classes)), yticklabels)
+    
+        upper_thresh = plotMat.min() + (plotMat.max() - plotMat.min()) / 10 * 8
+        lower_thresh = plotMat.min() + (plotMat.max() - plotMat.min()) / 10 * 2
+        for i, j in itertools.product(range(plotMat.shape[0]), range(plotMat.shape[1])):
+            plt.text(j, i, format(plotMat[i, j], '.2f'),
+                     horizontalalignment="center",
+                     color="white" if (plotMat[i, j] > upper_thresh or plotMat[i, j] < lower_thresh) else "black")
+    
+        plt.ylabel('Metrics')
+        plt.xlabel('Classes')
+        plt.tight_layout()
+
+    #https://stackoverflow.com/questions/43137288/how-to-determine-needed-memory-of-keras-model
+    def get_model_memory_usage(self, batch_size, model):
+
+    
+        shapes_mem_count = 0
+        for l in model.layers:
+            single_layer_mem = 1
+            for s in l.output_shape:
+                if s is None:
+                    continue
+                single_layer_mem *= s
+            shapes_mem_count += single_layer_mem
+    
+        trainable_count = np.sum([K.count_params(p) for p in set(model.trainable_weights)])
+        non_trainable_count = np.sum([K.count_params(p) for p in set(model.non_trainable_weights)])
+    
+        number_size = 4.0
+        if K.floatx() == 'float16':
+            number_size = 2.0
+        if K.floatx() == 'float64':
+            number_size = 8.0
+    
+        total_memory = number_size*(batch_size*shapes_mem_count + trainable_count + non_trainable_count)
+        gbytes = np.round(total_memory / (1024.0 ** 3), 6)
+        return gbytes
+    
+    #https://stackoverflow.com/questions/49525776/how-to-calculate-a-mobilenet-flops-in-keras
+    def get_flops(self, model):
+
+        
+        run_meta = tf.RunMetadata()
+        opts = tf.profiler.ProfileOptionBuilder.float_operation()
+    
+        # We use the Keras session graph in the call to the profiler.
+        flops = tf.profiler.profile(graph=K.get_session().graph,
+                                    run_meta=run_meta, cmd='op', options=opts)
+    
+        return flops.total_float_ops  # Prints the "flops" of the model.
+    
+    
+    
+    
+    
