@@ -11,6 +11,7 @@ class ImageGeneratorDataloader(BaseDataLoader):
             rescale=1./255,  # regularise RGB channels (doesn't affect the actual color)
             zoom_range=[.65, 1],  # we are zooming in at most 35%, so in the range of 0 to 35%
             horizontal_flip=True,  # flipping the image horizontally
+            brightness_range=[0.2,1.0], #brightness image augmentation randomly darken the image between 1.0 (no change) and 0.2 or 20%
             fill_mode='constant')
 
         
