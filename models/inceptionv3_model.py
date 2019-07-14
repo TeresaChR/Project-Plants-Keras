@@ -1,9 +1,11 @@
-from keras.applications.inception_v3 import InceptionV3
+from keras.applications import inception_v3
 from keras.preprocessing import image
 from keras.models import Model
 from keras.layers import Dense, GlobalAveragePooling2D
 from base.base_model import BaseModel
 import os.path as path
+import tensorflow as tf
+import keras.backend as K
 
 class Inceptionv3_model(BaseModel):
     def __init__(self, config):
@@ -13,46 +15,48 @@ class Inceptionv3_model(BaseModel):
     def build_model(self):
         
         # create the base pre-trained model
-        base_model = InceptionV3(weights='imagenet', include_top=False)
+        base_model = inception_v3.InceptionV3(weights='imagenet', include_top=False,pooling=None)
         
-        # add a global spatial average pooling layer
-        x = base_model.output
-        x = GlobalAveragePooling2D()(x)
-        # let's add a fully-connected layer
-        x = Dense(1024, activation='relu')(x)
-        # and a logistic layer -- let's say we have x classes
-        predictions = Dense(self.config.model.classes_num, activation='softmax')(x)
+        #for i,layer in enumerate(self.model.layers):
+        #    print(i,layer.name)
+        #base_model.summary()
         
-        # this is the model we will train
-        self.model = Model(inputs=base_model.input, outputs=predictions)
-        
-        
-        if path.exists(self.config.model.pretrained_weights_file):
+        x=base_model.output
+        x=GlobalAveragePooling2D(name='avg_pool')(x)
+        preds=Dense(self.config.model.classes_num, activation='softmax', name='predictions')(x) #final layer with softmax activation
 
-            print("----------Weight being loaded from file------------")
-            self.model.load_weights(self.config.model.pretrained_weights_file)
-            
-            # first: train only the top layers (which were randomly initialized)
-            # i.e. freeze all convolutional InceptionV3 layers
-            # we chose to train the top 2 inception blocks, i.e. we will freeze
-            # the first 172 layers and unfreeze the rest:
-            for layer in self.model.layers[:172]:
-                layer.trainable = False
-            for layer in self.model.layers[172:]:
-                layer.trainable = True
-            
-            # we need to recompile the model for these modifications to take effect
-            # we use SGD with a low learning rate
-            from keras.optimizers import SGD
-            self.model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss='categorical_crossentropy', metrics=['accuracy'])
+        self.model=Model(inputs=base_model.input,outputs=preds)
 
-            
-        else:
-            print("----------No Weight File ------------")
-            # first: train only the top layers (which were randomly initialized)
-            # i.e. freeze all convolutional InceptionV3 layers
-            for layer in base_model.layers:
-                layer.trainable = False
+        self.model.summary()
             
             # compile the model (should be done *after* setting layers to non-trainable)
-            self.model.compile(optimizer=self.config.model.optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
+        self.model.compile(optimizer=self.config.model.optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
+        
+    #https://stackoverflow.com/questions/43137288/how-to-determine-needed-memory-of-keras-model
+    def get_model_memory_usage(self, batch_size, model):
+        import numpy as np
+        from keras import backend as K
+    
+        shapes_mem_count = 0
+        for l in model.layers:
+            single_layer_mem = 1
+            for s in l.output_shape:
+                if s is None:
+                    continue
+                single_layer_mem *= s
+            shapes_mem_count += single_layer_mem
+    
+        trainable_count = np.sum([K.count_params(p) for p in set(model.trainable_weights)])
+        non_trainable_count = np.sum([K.count_params(p) for p in set(model.non_trainable_weights)])
+    
+        number_size = 4.0
+        if K.floatx() == 'float16':
+             number_size = 2.0
+        if K.floatx() == 'float64':
+             number_size = 8.0
+    
+        total_memory = number_size*(batch_size*shapes_mem_count + trainable_count + non_trainable_count)
+        gbytes = np.round(total_memory / (1024.0 ** 3), 6)
+        return gbytes
+    
+ 
