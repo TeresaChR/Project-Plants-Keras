@@ -24,7 +24,7 @@
     "verbose_training": true
   },
   "evaluater":{
-    "weights_path": ""
+    "weights_path": "/home/stephen/Projects/Plants/experiments/2019-07-14/flower17_mobilenetV2/checkpoints/flower17_mobilenetV2-02-0.48.hdf5"
   },
   "callbacks":{
     "checkpoint_monitor": "val_loss",

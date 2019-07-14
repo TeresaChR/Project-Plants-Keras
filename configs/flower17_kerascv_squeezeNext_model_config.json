@@ -1,6 +1,6 @@
 {
   "exp": {
-    "name": "flower17_efficientnet"
+    "name": "flower17_Squeezenext_model_kerascv_model"
   },
   "data_loader": {
     "name": "image_generator_data_loader.ImageGeneratorDataloader",
@@ -8,7 +8,7 @@
     "validation_data_path": "dataset/17_flowers/validation"
   },
   "model":{
-    "name": "efficientnet_model.Efficientnet_model",
+    "name": "kerascv_models.Squeezenext_model",
     "pretrained_weights_file": "",
     "learning_rate": 0.001,
     "optimizer": "adam",
@@ -16,7 +16,7 @@
   },
   "trainer":{
     "num_epochs": 20,
-    "batch_size": 56,
+    "batch_size": 72,
     "validation_split":0.25,
     "dim":224,
     "num_training_img": 1190, 
@@ -24,7 +24,7 @@
     "verbose_training": true
   },
   "evaluater":{
-    "weights_path": "/home/stephen/Projects/Plants/experiments/2019-07-14/flower17_efficientnet/checkpoints/flower17_efficientnet-18-0.06.hdf5"
+    "weights_path": "/home/stephen/Projects/Plants/experiments/2019-07-13/flower17_Squeezenext_model_kerascv_model/checkpoints/flower17_Squeezenext_model_kerascv_model-01-2.29.hdf5"
   },
   "callbacks":{
     "checkpoint_monitor": "val_loss",
